@@ -1,4 +1,4 @@
-import subprocess, random, string, time, os
+import subprocess, random, string, time, os, ast
 
 def gerarUsername():
     caracteres = string.ascii_lowercase + string.digits
@@ -7,6 +7,34 @@ def gerarUsername():
 def gerarChaves():
     chaves = subprocess.run(["./freechains", f"--host=localhost:{porta}", "keys", "pubpvt", f"{username}"],  stdout=subprocess.PIPE, text=True)
     return chaves.stdout.strip().split()
+
+def verReputacao(value=None):
+
+    # Retornar reputação de uma mensagem
+    if value != None:
+        rep = subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "reps", f"{value}"], stdout=subprocess.PIPE, text=True)
+        return int(rep.stdout.strip())
+
+    # Retornar reputação de um usuário
+    rep = subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "reps", f"{chavePublica}"], stdout=subprocess.PIPE, text=True)
+    return int(rep.stdout.strip())
+
+def avaliarReputacao():
+    if verReputacao() >= 0:
+        return True
+    return False
+
+def gerarTemplate(posicao, valor, status):
+
+    dic = {}
+
+    dic['codigo'] = random.randint(1000, 9999)
+    dic['posicao'] = posicao
+    dic['caracteristica'] = valor
+    dic['contato'] = emailContato
+    dic['status'] = status
+
+    return dic
 
 def iniciarServidor():
     subprocess.Popen(["./freechains-host", f"--port={porta}", "start", f"{diretorioChain}"])
@@ -19,29 +47,35 @@ def encerrarServidor():
 def entrarNaCadeia():
     subprocess.run(["./freechains", f"--host=localhost:{porta}", "chains", "join", f"{forum}", f"{chavePioneiro}"])
 
-def postarOfertaGoleiro(altura):
-    template =  f"Posição: Goleiro / Altura: {altura} / Contato: {emailContato} / Status: Aberta"
-    subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "post", "inline", f"{template}", f"--sign={chavePrivada}"])
-
-def fecharOfertaGoleiro(altura):
-    template =  f"Posição: Goleiro / Altura: {altura} / Contato: {emailContato} / Status: Fechada"
-    subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "post", "inline", f"{template}", f"--sign={chavePrivada}"])
-
-def postarOfertaDefensor(desarmes):
-    template = f"Posição: Defensor / Desarmes: {desarmes} / Contato: {emailContato} / Status: Aberta"
-    subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "post", "inline", f"{template}", f"--sign={chavePrivada}"])
-
-def fecharOfertaDefensor(desarmes):
-    template = f"Posição: Defensor / Desarmes: {desarmes} / Contato: {emailContato} / Status: Fechada"
-    subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "post", "inline", f"{template}", f"--sign={chavePrivada}"])
-    
 def postarOfertaAtacante(gols):
-    template = f"Posição: Atacante / Gols: {gols} / Contato: {emailContato} / Status: Aberta"
-    subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "post", "inline", f"{template}", f"--sign={chavePrivada}"])
+    template = gerarTemplate("Atacante", gols, "Aberta")
+    if avaliarReputacao():
+        subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "post", "inline", f"{template}", f"--sign={chavePrivada}"])
 
 def fecharOfertaAtacante(gols):
-    template = f"Posição: Atacante / Gols: {gols} / Contato: {emailContato} / Status: Fechada"
-    subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "post", "inline", f"{template}", f"--sign={chavePrivada}"])
+    template = gerarTemplate("Atacante", gols, "Fechada")
+    if avaliarReputacao():
+        subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "post", "inline", f"{template}", f"--sign={chavePrivada}"])
+
+def postarOfertaDefensor(desarmes):
+    template = gerarTemplate("Defensor", desarmes, "Aberta")
+    if avaliarReputacao():
+        subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "post", "inline", f"{template}", f"--sign={chavePrivada}"])
+
+def fecharOfertaDefensor(desarmes):
+    template = gerarTemplate("Defensor", desarmes, "Fechada")
+    if avaliarReputacao():
+        subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "post", "inline", f"{template}", f"--sign={chavePrivada}"])
+    
+def postarOfertaGoleiro(altura):
+    template = gerarTemplate("Goleiro", altura, "Aberta")
+    if avaliarReputacao():
+        subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "post", "inline", f"{template}", f"--sign={chavePrivada}"])
+
+def fecharOfertaGoleiro(altura):
+    template = gerarTemplate("Goleiro", altura, "Fechada")
+    if avaliarReputacao():
+        subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "post", "inline", f"{template}", f"--sign={chavePrivada}"])
 
 def enviarCadeiaPara(portaDest=8330):
     subprocess.run(["./freechains", f"--host=localhost:{porta}", "peer", f"localhost:{portaDest}", "send", f"{forum}"])
@@ -58,76 +92,85 @@ def buscarBlocos():
     heads = saida.stdout.strip().split()
 
     # Armazenar em um dicionário o head, payload, status e reputação de cada bloco
-    blocos, contador = {}, 0
+    lista = []
     for head in heads:
-
-        blocos[contador] = {}
-
-        blocos[contador]["head"] = head
 
         pl = subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "get", "payload", f"{head}"], stdout=subprocess.PIPE, text=True)
         pl = pl.stdout.strip()
 
-        blocos[contador]["payload"] = pl
+        if pl != '':
+            lista.append(ast.literal_eval(pl))
 
-        blocos[contador]["status"] = pl[pl.find("Status: ") + len("Status: "):]
+            indice = len(lista) - 1
+            lista[indice]['reputacao'] = verReputacao(head)
+            lista[indice]['head'] = head
 
-        rep = subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "reps", f"{head}"], stdout=subprocess.PIPE, text=True)
-        blocos[contador]["reputacao"] = int(rep.stdout.strip())
-
-        contador += 1
-
-    return blocos
+    return lista
 
 def filtrarOfertasAbertas():
     blocos = buscarBlocos()
 
-    # Armazenar em uma lista todas as ofertas
-    abertas = []
-    for chave, bloco in blocos.items():
-        if bloco["status"] == "Aberta" and int(bloco["reputacao"]) >= 0:
-            abertas.append(bloco["payload"])
+    for i in blocos:
+        for j in blocos:
+            if i['posicao'] == j['posicao'] and i['caracteristica'] == j['caracteristica'] and i['contato'] == j['contato'] and i['status'] != j['status']:
+                blocos.remove(i)
+                blocos.remove(j)
 
-    # Remover da lita ofertas que foram fechadas
-    for chave, bloco in blocos.items():
-        for payload in abertas:
-            
-            # Remover o "Status" do payload para fazer a comparação
-            cutbc = bloco["payload"].split(".com")[0] + ".com"
-            cutpl = payload.split(".com")[0] + ".com"
+    return blocos
 
-            if bloco["status"] == "Fechada" and cutbc == cutpl:
-                abertas.remove(payload)
+def exibirOfertasAbertas():
+    lista = filtrarOfertasAbertas()
 
-    # Exibir todas as ofertas abertas
     print("\n=== Ofertas Abertas ===\n")
-    for payload in abertas:    
-        print(f"{payload}\n")
-    print("\n")
 
-def darLike(mensagem):
+    for item in lista:
+        if item['reputacao'] >= 0:
+            print(f"Código: {item['codigo']}")
+
+            posicao = item['posicao']
+            print(f"Posição: {posicao}")
+
+            if posicao == "Atacante":
+                print(f"Gols: {item['caracteristica']}")
+            if posicao == "Defensor":
+                print(f"Desarmes: {item['caracteristica']}")
+            if posicao == "Goleiro":
+                print(f"Altura: {item['caracteristica']}")
+
+            print(f"Contato: {item['contato']}\n")
+        
+def darLike(value):
+
+    # Like se for uma chave pública
+    if type(value) is not int and len(value) == 64:
+        subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "like", f"{value}", f"--sign={chavePrivada}"])
+        return
+
+    # Like se for uma mensagem
     blocos = buscarBlocos()
 
-    # Comparar todos os payloads com a mensagem do parâmetro
-    for chave, bloco in blocos.items():
-        if bloco["payload"] == mensagem:
-            head = bloco["head"]
+    for bloco in blocos:
+        if bloco['codigo'] == value:
+            head = bloco['head']
             subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "like", f"{head}", f"--sign={chavePrivada}"])
 
-def darDislike(mensagem):
+def darDislike(value):
+
+    # Dislike se for uma chave pública
+    if type(value) is not int and len(value) == 64:
+        subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "like", f"{value}", f"--sign={chavePrivada}"])
+        return
+
+    # Dislike se for uma mensagem
     blocos = buscarBlocos()
 
-    # Comparar todos os payloads com a mensagem do parâmetro
-    for chave, bloco in blocos.items():
-        if bloco["payload"] == mensagem:
-            head = bloco["head"]
+    for bloco in blocos:
+        if bloco['codigo'] == value:
+            head = bloco['head']
             subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "dislike", f"{head}", f"--sign={chavePrivada}"])
 
 def setTimestamp(timestamp):
     subprocess.run(["./freechains-host", "now", f"{timestamp}"])
-
-def verReputacao():
-    subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "reps", f"{chavePublica}"], stdout=subprocess.PIPE, text=True)
 
 username = gerarUsername()
 diretorioChain = os.getcwd() + f"/{username}"

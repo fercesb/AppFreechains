@@ -9,26 +9,26 @@
 
 # B. Comandos implementados
 
-1. **Postar oferta:**
+1. **Postar oferta (Necessário reputação >= 0 para postar):**
 - postarOfertaAtacante(gols)
 - postarOfertaDefensor(desarmes)
 - postarOfertaGoleiro(altura)
 
-2. **Fechar Oferta (os parâmetros devem ser os mesmos da criação da oferta):**
+2. **Fechar Oferta (Os parâmetros devem ser os mesmos da criação da oferta):**
 - fecharOfertaAtacante(gols)
 - fecharOfertaDefensor(desarmes)
 - fecharOfertaGoleiro(altura)
 
 3. **Buscar Ofertas (Apenas ofertas com status aberto e reputação >= 0):**
-- filtrarOfertasAbertas()
+- exibirOfertasAbertas()
 
 4. **Atualizar a cadeia:**
 - enviarCadeiaPara(porta)
 - pedirCadeiaPara(porta)
 
 5. **Avaliar:**
-- darLike(mensagem)
-- darDislike(mensagem)
+- darLike(value)
+- darDislike(value)
 
 6. **Alterar Timestamp**
 - setTimestamp(timestamp)
