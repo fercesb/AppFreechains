@@ -8,6 +8,12 @@ def gerarChaves():
     chaves = subprocess.run(["./freechains", f"--host=localhost:{porta}", "keys", "pubpvt", f"{username}"],  stdout=subprocess.PIPE, text=True)
     return chaves.stdout.strip().split()
 
+def entrarNaCadeia():
+    subprocess.run(["./freechains", f"--host=localhost:{porta}", "chains", "join", f"{forum}", f"{chavePioneiro}"])
+
+def sairDaCadeia():
+    subprocess.run(["./freechains", f"--host=localhost:{porta}", "chains", "leave", f"{forum}"])
+
 def verReputacao(value=None):
 
     # Retornar reputação de uma mensagem
@@ -20,8 +26,11 @@ def verReputacao(value=None):
     return int(rep.stdout.strip())
 
 def avaliarReputacao():
-    if verReputacao() >= 0:
+    rep = verReputacao()
+    if rep >= 0:
         return True
+    if rep <= -3:
+        sairDaCadeia()
     return False
 
 def gerarTemplate(posicao, valor, status):
@@ -43,9 +52,6 @@ def iniciarServidor():
 def encerrarServidor():
     subprocess.Popen(["./freechains-host", f"--port={porta}", "stop"])
     time.sleep(2)
-
-def entrarNaCadeia():
-    subprocess.run(["./freechains", f"--host=localhost:{porta}", "chains", "join", f"{forum}", f"{chavePioneiro}"])
 
 def postarOfertaAtacante(gols):
     template = gerarTemplate("Atacante", gols, "Aberta")
@@ -119,6 +125,8 @@ def filtrarOfertasAbertas():
     return blocos
 
 def exibirOfertasAbertas():
+    avaliarReputacao()
+    
     lista = filtrarOfertasAbertas()
 
     print("\n=== Ofertas Abertas ===\n")

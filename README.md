@@ -33,7 +33,7 @@
 6. **Alterar Timestamp**
 - setTimestamp(timestamp)
 
-7. **Ver Reputação**
+7. **Ver Reputação (O usuário pode ser removido da cadeia dependendo da reputação)**
 - verReputacao()
 
 # C. Comandos não implementados
