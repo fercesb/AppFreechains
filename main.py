@@ -30,6 +30,7 @@ def avaliarReputacao():
     if rep >= 0:
         return True
     if rep <= -3:
+        print("Sua reputação está muito baixa! Você está sendo removido da cadeia")
         sairDaCadeia()
     return False
 
@@ -84,9 +85,11 @@ def fecharOfertaGoleiro(altura):
         subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "post", "inline", f"{template}", f"--sign={chavePrivada}"])
 
 def enviarCadeiaPara(portaDest=8330):
+    avaliarReputacao()
     subprocess.run(["./freechains", f"--host=localhost:{porta}", "peer", f"localhost:{portaDest}", "send", f"{forum}"])
 
 def pedirCadeiaPara(portaDest=8330):
+    avaliarReputacao()
     subprocess.run(["./freechains", f"--host=localhost:{porta}", "peer", f"localhost:{portaDest}", "recv", f"{forum}"])
 
 def buscarBlocos():
