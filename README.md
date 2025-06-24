@@ -1,11 +1,9 @@
 # A. Manual de utilização
 
 1. Colocar o arquivo *main.py* na pasta do freechains
-2. Abrir o terminal nesta pasta e executar *python -i main.py*
+2. Abrir o terminal nesta pasta e executar *python main.py*
 
 - Com isso já foi criada uma pasta para o host, iniciado o host e feito join na cadeia
-
-3. Para sair execute *encerrarServidor()* e em seguida *exit()*
 
 # B. Comandos implementados
 
