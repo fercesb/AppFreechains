@@ -11,8 +11,12 @@ while True:
     elif c == 3:
         menu.fecharOferta()
     elif c == 4:
-        menu.atualizar()
+        menu.like()
     elif c == 5:
+        menu.dislike()
+    elif c == 6:
+        menu.atualizar()
+    elif c == 7:
         menu.sair()
     else:
         print("Opção inválida!")

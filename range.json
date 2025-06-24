@@ -1,8 +1,8 @@
 {
   "goleiro": {
     "altura": {
-      "min": 1.80,
-      "max": 2.05
+      "min": 180,
+      "max": 205
     }
   },
   "atacante": {

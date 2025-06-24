@@ -37,8 +37,7 @@
 - verReputacao()
 
 # C. Comandos não implementados
-
-As chaves publicas e privadas não puderam ser geradas dinamicamente pois estavam gerando um bug em que só o primeiro bloco era inserido, consequentemente a função darlike(mensagem) não funciona pois o protocolo entende que está sendo atribuido um like para o próprio post *(chain like: like must not target itself)*. Apesar disso, ainda é possível usar o sistema de reputação ao esconder uma oferta dando um dislike.
+No momento as chaves estão hard coded para facilitar testes
 
 # D. Ferramentas Utilizadas:
 

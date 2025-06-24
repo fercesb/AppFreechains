@@ -6,8 +6,10 @@ def menu():
         1 - Buscar Ofertas
         2 - Postar Oferta
         3 - Fechar Oferta
-        4 - Atualizar
-        5 - Sair
+        4 - Like
+        5 - Dislike
+        6 - Atualizar
+        7 - Sair
 """)
     
 def menuOferta():
@@ -36,6 +38,14 @@ def postarOferta():
 
 def fecharOferta():
     menuOferta()
+
+def like():
+    cod = int(input("Insira o código da mensagem -> "))
+    src.darLike(cod)
+
+def dislike():
+    cod = int(input("Insira o código da mensagem -> "))
+    src.darDislike(cod)
 
 def atualizar():
     src.atualizar()

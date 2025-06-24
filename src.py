@@ -1,4 +1,4 @@
-import subprocess, random, string, time, os, ast
+import subprocess, random, string, time, os, ast, json
 
 def escreverNoArquivo(porta):
     with open("pares.txt", "a") as arquivo:
@@ -21,6 +21,11 @@ def lerPortas():
     with open("pares.txt", "r") as arquivo:
         portas = [int(linha.strip()) for linha in arquivo]
     return portas
+
+def lerJSON():
+    with open("range.json", "r") as arquivo:
+        dados = json.load(arquivo)
+    return dados
 
 def gerarUsername():
     caracteres = string.ascii_lowercase + string.digits
@@ -46,6 +51,44 @@ def verReputacao(value=None):
     # Retornar reputação de um usuário
     rep = subprocess.run(["./freechains", f"--host=localhost:{porta}", "chain", f"{forum}", "reps", f"{chavePublica}"], stdout=subprocess.PIPE, text=True)
     return int(rep.stdout.strip())
+
+def gerarEtiqueta(posicao, valor):
+    repAutor = verReputacao()
+    dados = lerJSON()
+    score = 0
+    tag = None
+
+    if repAutor <= -3:
+        score -= 1
+    else:
+        score += 1
+
+    if posicao == "Atacante":
+        if valor < dados['atacante']['gols']['min'] or valor > dados['atacante']['gols']['max']:
+            score -= 3
+        else:
+            score += 1
+    
+    if posicao == "Defensor":
+        if valor < dados['defensor']['desarmes']['min'] or valor > dados['defensor']['desarmes']['max'] :
+            score -= 3
+        else:
+            score += 1
+    
+    if posicao == "Goleiro":
+        if valor < dados['goleiro']['altura']['min'] or valor > dados['goleiro']['altura']['max']:
+            score -= 3
+        else:
+            score += 1
+
+    if score >= 2:
+        tag = "Confiável"
+    if score == 0:
+        tag = "Neutro"
+    if score < 0:
+        tag = 'Duvidoso'
+    
+    return tag
 
 def avaliarReputacao():
     rep = verReputacao()
@@ -137,6 +180,7 @@ def buscarBlocos():
             indice = len(lista) - 1
             lista[indice]['reputacao'] = verReputacao(head)
             lista[indice]['head'] = head
+            lista[indice]['tag'] = gerarEtiqueta(lista[indice]['posicao'], lista[indice]['caracteristica'])
 
     return lista
 
@@ -172,7 +216,8 @@ def exibirOfertasAbertas():
             if posicao == "Goleiro":
                 print(f"Altura: {item['caracteristica']}")
 
-            print(f"Contato: {item['contato']}\n")
+            print(f"Contato: {item['contato']}")
+            print(f"Avalição: {item['tag']}\n")
         
 def darLike(value):
 
