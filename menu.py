@@ -38,6 +38,16 @@ def postarOferta():
 
 def fecharOferta():
     menuOferta()
+    c = int(input("Escolha uma opção -> "))
+    if c == 1:
+        gols = int(input("Quantos gols esse atacante fez? -> "))
+        src.fecharOfertaAtacante(gols)
+    elif c == 2:
+        desarmes = int(input("Quantos desarmes esse defensor fez? -> "))
+        src.fecharOfertaDefensor(desarmes)
+    elif c == 3:
+        altura = int(input("Qual a altura do goleiro? -> "))
+        src.fecharOfertaGoleiro(altura)
 
 def like():
     cod = int(input("Insira o código da mensagem -> "))
