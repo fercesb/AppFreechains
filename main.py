@@ -1,22 +1,44 @@
-import src, menu
+import menuSrc, src
+
+forum = "#forum"
+chavePioneiro = "99CA7DC51444DE55E0A71697C95EC5170CDF7C115A59733769A1E9ED60A4A403"
+porta = src.selecionarPorta()
+username = src.gerarUsername()
+diretorio = src.definirDiretorio(username)
+
+src.iniciarHost(porta, diretorio)
+
+chaves = src.gerarChaves(porta, username)
+chavePublica = chaves[0]
+chavePrivada = chaves[1]
+
+src.entrarNaCadeia(porta, forum, chavePioneiro)
 
 while True:
-    menu.menu()
-    c = int(input("Escolha uma opção -> "))
+
+    menuSrc.menuPrincipal()
+
+    try:
+        c = int(input("Escolha uma opção -> "))
+    except ValueError:
+        print("Opção inválida!")
+        continue
 
     if c == 1:
-        menu.buscarOfertas()
+        menuSrc.buscarLeiloesAbertos(porta, forum)
     elif c == 2:
-        menu.postarOferta()
+        menuSrc.iniciarLeilao(porta, forum, chavePrivada)
     elif c == 3:
-        menu.fecharOferta()
+        menuSrc.enviarLance(porta, forum, chavePrivada)
     elif c == 4:
-        menu.like()
+        menuSrc.elegerVencedor(porta, forum)
     elif c == 5:
-        menu.dislike()
+        menuSrc.like(porta, forum, chavePrivada)
     elif c == 6:
-        menu.atualizar()
+        menuSrc.dislike(porta, forum, chavePrivada)
     elif c == 7:
-        menu.sair()
-    else:
-        print("Opção inválida!")
+        menuSrc.atualizar(porta, forum)
+    elif c == 8:
+        menuSrc.verReputação(porta, forum, chavePublica)
+    elif c == 9:
+        menuSrc.sair(porta)

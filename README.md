@@ -1,41 +1,27 @@
 # A. Manual de utilização
 
-1. Colocar o arquivo *main.py* na pasta do freechains
-2. Abrir o terminal nesta pasta e executar *python main.py*
+1. Clonar o repositório;
+2. Entrar no diretório e instalar o Freechains;
+    - wget https://github.com/Freechains/README/releases/download/v0.10.1/install-v0.10.1.sh
+    - sh install-v0.10.1.sh .
+3. Iniciar a aplicação com *python main.py*;
+4. Utilizar a aplicação conforme o menu.
 
-- Com isso já foi criada uma pasta para o host, iniciado o host e feito join na cadeia
+- Obs: Caso a aplicação quebre, é necessário apagar a porta no arquivo *pares.txt* e encerrar o processo com o comando *fuser -k porta/tcp*, por exemplo 
+.
+# B. Funcionalidades implementadas
+1. Iniciar leilão;
+2. Submeter lances para um leilão;
+3. Filtragem de leilões dentre todos os blocos;
+4. Filtragem de lances dentre todos os blocos;
+5. Eleição do lance vencedor com base no valor e na reputação;
+6. Atualização da cadeia de forma facilitada;
+7. Atribuição de like e dislike;
+8. Exibição de lances e leilões.
 
-# B. Comandos implementados
-
-1. **Postar oferta (Necessário reputação >= 0 para postar):**
-- postarOfertaAtacante(gols)
-- postarOfertaDefensor(desarmes)
-- postarOfertaGoleiro(altura)
-
-2. **Fechar Oferta (Os parâmetros devem ser os mesmos da criação da oferta):**
-- fecharOfertaAtacante(gols)
-- fecharOfertaDefensor(desarmes)
-- fecharOfertaGoleiro(altura)
-
-3. **Buscar Ofertas (Apenas ofertas com status aberto e reputação >= 0):**
-- exibirOfertasAbertas()
-
-4. **Atualizar a cadeia:**
-- enviarCadeiaPara(porta)
-- pedirCadeiaPara(porta)
-
-5. **Avaliar:**
-- darLike(value)
-- darDislike(value)
-
-6. **Alterar Timestamp**
-- setTimestamp(timestamp)
-
-7. **Ver Reputação (O usuário pode ser removido da cadeia dependendo da reputação)**
-- verReputacao()
-
-# C. Comandos não implementados
-No momento as chaves estão hard coded para facilitar testes
+# C. Funcionalidades não implementadas
+1. Encerramento de leilão;
+2. Retirada de lances.
 
 # D. Ferramentas Utilizadas:
 
