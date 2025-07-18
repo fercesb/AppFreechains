@@ -7,7 +7,7 @@
 3. Iniciar a aplicação com *python main.py*;
 4. Utilizar a aplicação conforme o menu.
 
-- Obs: Caso a aplicação quebre, é necessário apagar a porta no arquivo *pares.txt* e encerrar o processo com o comando *fuser -k porta/tcp*, por exemplo 
+- Obs: Caso a aplicação quebre, é necessário apagar a porta no arquivo *pares.txt* e encerrar o host com o comando *fuser -k porta/tcp*, por exemplo.
 .
 # B. Funcionalidades implementadas
 1. Iniciar leilão;

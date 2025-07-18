@@ -27,14 +27,14 @@ def buscarLeiloesAbertos(porta, forum):
         src.exibirLeiloesAbertos(porta, forum, False)
 
 def iniciarLeilao(porta, forum, chavePrivada):
-    agente = input("Qual você quer ser chamado? -> ")
+    agente = input("Como você quer ser chamado? -> ")
     jogador = input("Qual é o nome do jogador? -> ")
     valor = int(input("Qual o valor do lance mínimo? -> "))
     src.iniciarLeilao(agente, jogador, valor, porta, forum, chavePrivada)
     print("Leilão iniciado com sucesso!")
 
 def enviarLance(porta, forum, chavePrivada):
-    nome = input("Qual você quer ser chamado? -> ")
+    nome = input("Como você quer ser chamado? -> ")
     codigo = int(input("Qual é o código do leilão? -> "))
     valor = int(input("Qual é o valor do seu lance? -> "))
     src.enviarLance(nome, codigo, valor, porta, forum, chavePrivada)
